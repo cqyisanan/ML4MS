@@ -1,0 +1,63 @@
+import numpy as np
+
+# define F(x,y)
+def F(x,y):
+  return np.exp(1j*y)+2.0*np.exp(-1j*y*0.5)*np.cos(np.sqrt(3)*0.5*x)
+
+def generate_matrix(x,y):
+      M=np.zeros((2,2))
+      M[0,1]+= F(x,y)
+      M[1,0]+= np.conj(F(x,y))
+      return M
+#print(M)    #just for check
+#print(M.dtype) #for check
+  
+# Task 1
+## Define x and y
+## x,y range
+x= np.linspace(-np.pi, np.pi,100)
+y= np.linspace(-np.pi, np.pi,100)
+
+## grid (x,y)
+X,Y=np.meshgrid(x, y)
+
+## eigenvalues
+eigenvalue1=np.zeros((100,100))
+eigenvalue2=np.zeros((100,100))
+
+# Evaluate M and Diagonalize M
+for i in range(100):
+  for j in range (100):
+    xx=X[i,j]
+    yy=Y[i,j]
+    F= np.exp(1j*yy)+2.0*np.exp(-1j*yy*0.5)*np.cos(np.sqrt(3)*0.5*xx)
+    
+    M=np.zeros((2,2),dtype=complex)
+    M[0,1]+= F
+    M[1,0]+= np.conj(F)
+    
+    eigenvalues, _ = np.linalg.eigh(M)
+    eigenvalue1[i, j] += eigenvalues[0]
+    eigenvalue2[i, j] += eigenvalues[1]
+
+#eigenvalues_array = np.array(eigenvalues) #check ...
+#print(eigenvalues_array)
+#print(M.dtype)
+
+# Task 2
+
+import matplotlib.pyplot as plt
+
+fig=plt.figure(figsize=(15,10))
+
+## plot eigenvalue1
+ax1=fig.add_subplot(121, projection='3d')
+ax1.plot_surface(X,Y,eigenvalue1)
+ax1.set_title('Eigenvalues 1')
+
+## plot eigenvalue2
+ax2=fig.add_subplot(122, projection='3d')
+ax2.plot_surface(X,Y,eigenvalue2)
+ax2.set_title('Eigenvalues 2')
+
+plt.show()
